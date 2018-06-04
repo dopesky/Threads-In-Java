@@ -13,14 +13,28 @@ import javax.swing.*;
 import org.jdesktop.xswingx.PromptSupport;
 
 /**
- *
+ * A class that shows basic implementation of
+ * threads in Java.
  * @author Kevin
  */
 public class Threads extends javax.swing.JFrame {
-
+        /**A class for animations ie basic left right and diagonal movement of some objects. 
+         * Note: This class is not inbuilt into the java system but an imported jar file included
+         * in the libraries.
+        */
         AnimationClass ac = new AnimationClass();
-        private boolean[] running = {true,true,true,true};
+        
+        /**
+         * a variable to enable looping out of endless loops when stop all button is 
+         * clicked
+         */
+        private boolean[] running = {true, true, true, true};
 
+        /**
+         * The first thread.
+         * Takes a JLabel and moves it left to right changing images
+         * after every move.
+         */
         MyRunnable first = new MyRunnable() {
                 @Override
                 public void run() {
@@ -61,11 +75,16 @@ public class Threads extends javax.swing.JFrame {
                                 }
                         }
                         lblImages.setIcon(new ImageIcon());
-                        isAlive = false;
                         setEnabled(btn1, true);
+                        isAlive = false;
                 }
         };
-        
+
+        /**
+         * The second thread.
+         * Generates random numbers after every one second and displays
+         * to the user.
+         */
         MyRunnable second = new MyRunnable() {
                 @Override
                 public void run() {
@@ -79,29 +98,50 @@ public class Threads extends javax.swing.JFrame {
                                 }
                         }
                         lblRandom.setText("");
-                        isAlive = false;
                         setEnabled(btn2, true);
-                       
+                        isAlive = false;
                 }
         };
 
+        /**
+         * The third thread.
+         * Moves a JLabel up and down over a period of time.
+         */
         MyRunnable third = new MyRunnable() {
                 @Override
                 public void run() {
                         isAlive = true;
-                        lblSlide.setIcon(getResizedImage("",lblSlide));
+                        lblSlide.setIcon(getResizedImage("/Resources/1575904.jpg", lblSlide));
                         while (running[2]) {
                                 try {
-                                        
+                                        switch (lblSlide.getLocation().y) {
+                                                case (-172):
+                                                        Thread.sleep(100);
+                                                        ac.jLabelYDown(-172,460,5,1,lblSlide);
+                                                        Thread.sleep(3500);
+                                                        break;
+                                                case (460):
+                                                        Thread.sleep(100);
+                                                        lblSlide.setLocation(lblSlide.getLocation().x,-172);
+                                                        break;
+                                        }
                                 } catch (Exception e) {
                                 }
                         }
-                        isAlive = false;
+                        lblSlide.setIcon(new ImageIcon());
                         setEnabled(btn3, true);
-       
+                        isAlive = false;
                 }
         };
 
+        /**
+         * The fourth thread.
+         * Shows the current time with an accuracy of the millisecond.
+         * One could also use the System.currentTimeMillis() to get
+         * current time in milliseconds but due to the variations in 
+         * number of days in a month its better and easier to use 
+         * the calendar class as shown below.
+         */
         MyRunnable fourth = new MyRunnable() {
                 @Override
                 public void run() {
@@ -115,8 +155,8 @@ public class Threads extends javax.swing.JFrame {
                                 lblTime.setText(time);
                         }
                         lblTime.setText("");
-                        isAlive = false;
                         setEnabled(btn4, true);
+                        isAlive = false;
                 }
         };
 
@@ -138,11 +178,35 @@ public class Threads extends javax.swing.JFrame {
                 PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.SHOW_PROMPT, txtOutput);
         }
 
+        /**
+         * This method gets an image and a JLabel and
+         * resizes the image to the size of the JLabel.
+         * It can be used with almost any component. Just
+         * change JLabel with the component where you want
+         * your image to appear.
+         * <b>Note: </b>This method does not place the image in the 
+         * Component but just resizes the image to the size of the 
+         * component and returns the image. To place the image in the
+         * component, use the method setIcon() for JLabels.
+         * @param url : The URL as a string containing the path to the resource.
+         * @param jlabel : The JLabel where the image is to be placed. 
+         * @return An IconImage that has been resized to the size of the JLabel.
+         */
         private ImageIcon getResizedImage(String url, JLabel jlabel) {
                 ImageIcon temp = new ImageIcon(new ImageIcon(getClass().getResource(url)).getImage().getScaledInstance(jlabel.getWidth(), jlabel.getHeight(), Image.SCALE_SMOOTH));
                 return temp;
         }
 
+        /**
+         * This method is used by all threads to set the enabled state of their 
+         * respective buttons to either true or false. This helps prevent clashing 
+         * of threads or Thread leaking caused by starting two threads with the 
+         * same name before one is finished. The method is synchronised 
+         * meaning only one thread can use it at a time to prevent concurrency
+         * issues.
+         * @param jbutton The JButton in question.
+         * @param state The state of that JButton
+         */
         private synchronized void setEnabled(JButton jbutton, boolean state) {
                 jbutton.setEnabled(state);
                 if (btn1.isEnabled() && btn2.isEnabled() && btn3.isEnabled() && btn4.isEnabled()) {
@@ -299,6 +363,16 @@ public class Threads extends javax.swing.JFrame {
                 }
         }//GEN-LAST:event_btn6ActionPerformed
 
+        /**
+         * This method is used with the JTextfield to reverse a string and display
+         * the output in real time. This is just to show that execution of all other
+         * threads will not interfere with the execution of other processes such 
+         * as this one. Try running all threads at the same time by clicking the 
+         * start all button then type in the JTextfield to see that output is still
+         * delivered in real time even though the other processes are continuing.
+         * @param evt a keyReleased event which is fired each time a key is
+         * released on the keyboard.
+         */
         private void txtInputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtInputKeyReleased
                 String reversed = "";
                 for (int a = 0; a < txtInput.getText().trim().length(); a++) {
@@ -345,10 +419,11 @@ public class Threads extends javax.swing.JFrame {
          * @param args the command line arguments
          */
         public static void main(String args[]) {
-                /* Set the Nimbus look and feel */
+                /* Set the Darcula look and feel */
                 //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-                /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+                /** I have used the Darcula jar in the lib folder to access the Darcula look and feel which
+                 * is a dark themed look and feel. To use the Darcula Look and feel, ensure the Darcula
+                 * Look and feel is in the libraries of this project.
                  */
                 try {
                         UIManager.setLookAndFeel(new DarculaLaf());
