@@ -11,9 +11,12 @@ package Threads;
  */
 public abstract class MyRunnable implements Runnable{
         protected boolean isAlive=false;
+        
         @Override
         public abstract void run();
+        
         public boolean isAlive(){
                 return isAlive;
         }
+        
 }
